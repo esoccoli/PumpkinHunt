@@ -12,11 +12,14 @@ namespace PumpkinHunt
 
         // Texture file and current position of the ghost
         private Texture2D ghostTexture;
-        private Vector2 ghostPos;
+        private Rectangle ghostPos;
 
         // texture file and current position of the pumpkin
         private Texture2D pumpkinTexture;
-        private Vector2 pumpkinPos;
+        private Rectangle pumpkinPos;
+
+        private int pumpkinX;
+        private int pumpkinY;
 
         // Random number generator to use for determining
         // the position of the next pumpkin
@@ -41,10 +44,18 @@ namespace PumpkinHunt
             _graphics.PreferredBackBufferHeight = 980;
             _graphics.ApplyChanges();
 
+            rng = new Random();
             // Sets an the initial position of the ghost
             // to be in the center of the screen
-            ghostPos = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
-            pumpkinPos = new Vector2(100, 100);
+            ghostPos = new Rectangle(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2, 64, 64);
+
+            //pumpkinX = rng.Next(0, GraphicsDevice.Viewport.Width - 64);
+            //pumpkinY = rng.Next(0, GraphicsDevice.Viewport.Height - 64);
+
+            pumpkinPos = new Rectangle(rng.Next(0, GraphicsDevice.Viewport.Width - 64), rng.Next(0, GraphicsDevice.Viewport.Height - 64), 64, 64);
+            //pumpkinPos = new Vector2(pumpkinPos.X, pumpkinPos.Y);
+
+            score = 0;
             base.Initialize();
         }
 
@@ -99,6 +110,16 @@ namespace PumpkinHunt
                 }   
             }
 
+            // Checks if the ghost collides with the pumpkin
+            if (ghostPos.Intersects(pumpkinPos))
+            {
+                pumpkinPos.X = rng.Next(0, GraphicsDevice.Viewport.Width - 64);
+                pumpkinPos.Y = rng.Next(0, GraphicsDevice.Viewport.Height - 64);
+
+                score += 1;
+                //pumpkinPos = Vector2(rng.Next(0, GraphicsDevice.Viewport.Width - 64), rng.Next(0, GraphicsDevice.Viewport.Height - 64));
+            }
+
             base.Update(gameTime);
         }
 
@@ -110,6 +131,7 @@ namespace PumpkinHunt
             _spriteBatch.Begin();
             _spriteBatch.Draw(ghostTexture, ghostPos, Color.White);
             _spriteBatch.Draw(pumpkinTexture, pumpkinPos, Color.White);
+            //_spriteBatch.Draw()
             _spriteBatch.End();
 
             base.Draw(gameTime);
