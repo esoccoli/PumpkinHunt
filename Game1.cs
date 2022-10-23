@@ -18,9 +18,6 @@ namespace PumpkinHunt
         private Texture2D pumpkinTexture;
         private Rectangle pumpkinPos;
 
-        private int pumpkinX;
-        private int pumpkinY;
-
         // Random number generator to use for determining
         // the position of the next pumpkin
         private Random rng;
@@ -28,37 +25,43 @@ namespace PumpkinHunt
         // Current score
         private int score;
 
+        // Stores the font to display the score on screen
+        private SpriteFont font;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
-
+        
+        /// <summary>
+        /// Initializes the necessary fields 
+        /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-            
             // Makes the window a 9:21 aspect ratio
             _graphics.PreferredBackBufferWidth = 420;
             _graphics.PreferredBackBufferHeight = 980;
             _graphics.ApplyChanges();
 
             rng = new Random();
+
             // Sets an the initial position of the ghost
             // to be in the center of the screen
             ghostPos = new Rectangle(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2, 64, 64);
-
-            //pumpkinX = rng.Next(0, GraphicsDevice.Viewport.Width - 64);
-            //pumpkinY = rng.Next(0, GraphicsDevice.Viewport.Height - 64);
-
+            
+            // Randomly generates coordinates of the pumpkin within the screen
             pumpkinPos = new Rectangle(rng.Next(0, GraphicsDevice.Viewport.Width - 64), rng.Next(0, GraphicsDevice.Viewport.Height - 64), 64, 64);
-            //pumpkinPos = new Vector2(pumpkinPos.X, pumpkinPos.Y);
 
             score = 0;
+            
             base.Initialize();
         }
 
+        /// <summary>
+        /// Loads the necessary texture files
+        /// </summary>
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -67,16 +70,19 @@ namespace PumpkinHunt
             ghostTexture = Content.Load<Texture2D>("ghost");
             pumpkinTexture = Content.Load<Texture2D>("pumpkin");
 
-            // TODO: use this.Content to load your game content here
+            // Loads the font file
+            font = Content.Load<SpriteFont>("Font");
         }
 
+        /// <summary>
+        /// Updates data stored in fields each frame
+        /// </summary>
+        /// <param name="gameTime">Current time in the game</param>
         protected override void Update(GameTime gameTime)
         {
             // Exits the game if the escape key is pressed
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
-            // TODO: Add your update logic here
 
             // Makes ghost move by pressing arrow keys
             // If the edge of the ghost hits a wall, the ghost
@@ -117,21 +123,28 @@ namespace PumpkinHunt
                 pumpkinPos.Y = rng.Next(0, GraphicsDevice.Viewport.Height - 64);
 
                 score += 1;
-                //pumpkinPos = Vector2(rng.Next(0, GraphicsDevice.Viewport.Width - 64), rng.Next(0, GraphicsDevice.Viewport.Height - 64));
             }
 
             base.Update(gameTime);
         }
 
+        /// <summary>
+        /// Updates the content that is displayed on screen every frame
+        /// </summary>
+        /// <param name="gameTime">The current time in the game</param>
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
 
-            // TODO: Add your drawing code here
             _spriteBatch.Begin();
+            
+            // Drawing the ghost and pumpkins
             _spriteBatch.Draw(ghostTexture, ghostPos, Color.White);
             _spriteBatch.Draw(pumpkinTexture, pumpkinPos, Color.White);
-            //_spriteBatch.Draw()
+
+            // Displaying the score
+            _spriteBatch.DrawString(font, $"Score: {score}", new Vector2(25, 25), Color.White);
+
             _spriteBatch.End();
 
             base.Draw(gameTime);
