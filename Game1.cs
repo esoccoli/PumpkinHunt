@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace PumpkinHunt
 {
@@ -9,12 +10,19 @@ namespace PumpkinHunt
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        // Texture file and current position of the ghost
         private Texture2D ghostTexture;
         private Vector2 ghostPos;
 
+        // texture file and current position of the pumpkin
         private Texture2D pumpkinTexture;
         private Vector2 pumpkinPos;
 
+        // Random number generator to use for determining
+        // the position of the next pumpkin
+        private Random rng;
+
+        // Current score
         private int score;
 
         public Game1()
@@ -36,7 +44,7 @@ namespace PumpkinHunt
             // Sets an the initial position of the ghost
             // to be in the center of the screen
             ghostPos = new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
-
+            pumpkinPos = new Vector2(100, 100);
             base.Initialize();
         }
 
@@ -44,12 +52,16 @@ namespace PumpkinHunt
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            // Loads the ghost and pumpkin textures
             ghostTexture = Content.Load<Texture2D>("ghost");
+            pumpkinTexture = Content.Load<Texture2D>("pumpkin");
+
             // TODO: use this.Content to load your game content here
         }
 
         protected override void Update(GameTime gameTime)
         {
+            // Exits the game if the escape key is pressed
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
@@ -97,6 +109,7 @@ namespace PumpkinHunt
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
             _spriteBatch.Draw(ghostTexture, ghostPos, Color.White);
+            _spriteBatch.Draw(pumpkinTexture, pumpkinPos, Color.White);
             _spriteBatch.End();
 
             base.Draw(gameTime);
